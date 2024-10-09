@@ -54,9 +54,11 @@ function startTimeUpdate(currentTime: number) {
 }
 
 function checkUnlock() {
-  if (counter >= 10) {
+  if (counter >= 10 && upgrade.disabled && growthRate < 1) {
     upgrade.disabled = false;
     growthRate = 1;
+  } else if (growthRate >= 1 && !upgrade.disabled) {
+    upgrade.disabled = true;
   }
 }
 
