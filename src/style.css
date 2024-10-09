@@ -43,6 +43,10 @@ h1 {
   text-align: center;
 }
 
+div {
+  padding-top: 2%;
+}
+
 button {
   border-radius: 8px;
   border: 1px solid transparent;
