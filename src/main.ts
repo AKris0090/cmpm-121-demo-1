@@ -19,8 +19,11 @@ counterElement.innerHTML =
   `${counter} 🦟` + (counter > 1 ? "s " : " ") + "swatted";
 app.append(counterElement);
 
-button.onclick = () => {
+setInterval(updateCounter, 1000);
+button.onclick = updateCounter;
+
+function updateCounter() {
   counter++;
   counterElement.innerHTML =
     `${counter} 🦟` + (counter > 1 ? "s " : " ") + "swatted";
-};
+}
