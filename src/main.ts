@@ -19,11 +19,24 @@ counterElement.innerHTML =
   `${counter} 🦟` + (counter > 1 ? "s " : " ") + "swatted";
 app.append(counterElement);
 
-setInterval(updateCounter, 1000);
-button.onclick = updateCounter;
+button.onclick = () => updateCounter();
 
-function updateCounter() {
-  counter++;
+function updateCounter(amount: number = 1) {
+  counter += amount;
   counterElement.innerHTML =
-    `${counter} 🦟` + (counter > 1 ? "s " : " ") + "swatted";
+    `${Math.round(counter)} 🦟` + (counter > 1 ? "s " : " ") + "swatted";
 }
+
+let lastTime = 0;
+
+function frameUpdate(currentTime: number) {
+  const delta = (currentTime - lastTime) / 1000;
+
+  lastTime = currentTime;
+
+  updateCounter(delta);
+
+  requestAnimationFrame(frameUpdate);
+}
+
+requestAnimationFrame(frameUpdate);
