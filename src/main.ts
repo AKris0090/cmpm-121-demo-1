@@ -9,7 +9,7 @@ let counter: number = 0;
 let startTime: number = 0;
 let growthRate: number = 0;
 
-interface UpgradeItem {
+interface Item {
   button: HTMLButtonElement;
   cost: number;
   growthRate: number;
@@ -25,47 +25,6 @@ app.append(header);
 const button: HTMLButtonElement = document.createElement("button");
 button.innerHTML = "🫱🦟";
 
-const autoSwatter: UpgradeItem = {
-  button: document.createElement("button"),
-  cost: 10,
-  growthRate: 0.1,
-  name: "Electric Swatter 🎾",
-  currentAmount: 0,
-  upgradeCounter: document.createElement("div"),
-};
-autoSwatter.button.innerHTML = autoSwatter.name;
-autoSwatter.button.disabled = true;
-autoSwatter.upgradeCounter.innerHTML =
-  autoSwatter.name +
-  ` x${autoSwatter.currentAmount}, cost: ` +
-  autoSwatter.cost;
-
-const UVLamp: UpgradeItem = {
-  button: document.createElement("button"),
-  cost: 100,
-  growthRate: 2.0,
-  name: "UV Lamp 🛋️",
-  currentAmount: 0,
-  upgradeCounter: document.createElement("div"),
-};
-UVLamp.button.innerHTML = UVLamp.name;
-UVLamp.button.disabled = true;
-UVLamp.upgradeCounter.innerHTML =
-  UVLamp.name + ` x${UVLamp.currentAmount}, cost: ` + UVLamp.cost;
-
-const BugSpray: UpgradeItem = {
-  button: document.createElement("button"),
-  cost: 1000,
-  growthRate: 50,
-  name: "Auto Swatter 🗞",
-  currentAmount: 0,
-  upgradeCounter: document.createElement("div"),
-};
-BugSpray.button.innerHTML = BugSpray.name;
-BugSpray.button.disabled = true;
-BugSpray.upgradeCounter.innerHTML =
-  BugSpray.name + ` x${BugSpray.currentAmount}, cost: ` + BugSpray.cost;
-
 const counterElement = document.createElement("div");
 counterElement.innerHTML =
   `${counter} 🦟` + (counter > 1 ? "s " : " ") + "swatted";
@@ -77,16 +36,45 @@ growthDisplay.innerHTML =
 const upgradeMenu = document.createElement("h2");
 upgradeMenu.innerHTML = "UPGRADES:";
 
-const upgrades: UpgradeItem[] = [autoSwatter, UVLamp, BugSpray];
+const availableItems: Item[] = [
+  {
+    button: document.createElement("button"),
+    cost: 10,
+    growthRate: 0.1,
+    name: "Electric Swatter 🎾",
+    currentAmount: 0,
+    upgradeCounter: document.createElement("div"),
+  },
+  {
+    button: document.createElement("button"),
+    cost: 100,
+    growthRate: 2.0,
+    name: "UV Lamp 🛋️",
+    currentAmount: 0,
+    upgradeCounter: document.createElement("div"),
+  },
+  {
+    button: document.createElement("button"),
+    cost: 1000,
+    growthRate: 50,
+    name: "Auto Swatter 🗞",
+    currentAmount: 0,
+    upgradeCounter: document.createElement("div"),
+  },
+];
 
 app.append(button);
-for (const curr of upgrades) {
+for (const curr of availableItems) {
+  curr.button.innerHTML = curr.name;
+  curr.button.disabled = true;
+  curr.upgradeCounter.innerHTML =
+    curr.name + ` x${curr.currentAmount}, cost: ` + curr.cost;
   app.append(curr.button);
 }
 app.append(counterElement);
 app.append(growthDisplay);
 app.append(upgradeMenu);
-for (const curr of upgrades) {
+for (const curr of availableItems) {
   app.append(curr.upgradeCounter);
 }
 
@@ -116,7 +104,7 @@ function startTimeUpdate(currentTime: number) {
   frameUpdate(currentTime);
 }
 
-function subtractCost(curr: UpgradeItem) {
+function subtractCost(curr: Item) {
   counter -= curr.cost;
   growthRate += curr.growthRate;
   curr.currentAmount++;
@@ -126,7 +114,7 @@ function subtractCost(curr: UpgradeItem) {
 }
 
 function checkUnlock() {
-  for (const curr of upgrades) {
+  for (const curr of availableItems) {
     if (counter >= curr.cost && curr.button.disabled) {
       curr.button.disabled = false;
     } else if (counter < curr.cost && !curr.button.disabled) {
@@ -136,7 +124,7 @@ function checkUnlock() {
 }
 
 button.onclick = () => updateCounter();
-for (const curr of upgrades) {
+for (const curr of availableItems) {
   curr.button.onclick = () => subtractCost(curr);
 }
 
