@@ -36,7 +36,9 @@ const autoSwatter: UpgradeItem = {
 autoSwatter.button.innerHTML = autoSwatter.name;
 autoSwatter.button.disabled = true;
 autoSwatter.upgradeCounter.innerHTML =
-  autoSwatter.name + ` x${autoSwatter.currentAmount}`;
+  autoSwatter.name +
+  ` x${autoSwatter.currentAmount}, cost: ` +
+  autoSwatter.cost;
 
 const UVLamp: UpgradeItem = {
   button: document.createElement("button"),
@@ -48,7 +50,8 @@ const UVLamp: UpgradeItem = {
 };
 UVLamp.button.innerHTML = UVLamp.name;
 UVLamp.button.disabled = true;
-UVLamp.upgradeCounter.innerHTML = UVLamp.name + ` x${UVLamp.currentAmount}`;
+UVLamp.upgradeCounter.innerHTML =
+  UVLamp.name + ` x${UVLamp.currentAmount}, cost: ` + UVLamp.cost;
 
 const BugSpray: UpgradeItem = {
   button: document.createElement("button"),
@@ -61,7 +64,7 @@ const BugSpray: UpgradeItem = {
 BugSpray.button.innerHTML = BugSpray.name;
 BugSpray.button.disabled = true;
 BugSpray.upgradeCounter.innerHTML =
-  BugSpray.name + ` x${BugSpray.currentAmount}`;
+  BugSpray.name + ` x${BugSpray.currentAmount}, cost: ` + BugSpray.cost;
 
 const counterElement = document.createElement("div");
 counterElement.innerHTML =
@@ -117,7 +120,9 @@ function subtractCost(curr: UpgradeItem) {
   counter -= curr.cost;
   growthRate += curr.growthRate;
   curr.currentAmount++;
-  curr.upgradeCounter.innerHTML = curr.name + ` x${curr.currentAmount}`;
+  curr.cost *= 1.15;
+  curr.upgradeCounter.innerHTML =
+    curr.name + ` x${curr.currentAmount}, cost: ` + curr.cost;
 }
 
 function checkUnlock() {
