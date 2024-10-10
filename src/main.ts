@@ -2,7 +2,7 @@ import "./style.css";
 
 const app: HTMLDivElement = document.querySelector("#app")!;
 
-const gameName = "Mosquito Swatting Simulator";
+const gameName = "🦟 Mosquito Swatting Simulator🦟";
 document.title = gameName;
 
 let counter: number = 0;
@@ -23,13 +23,13 @@ header.innerHTML = gameName;
 app.append(header);
 
 const button: HTMLButtonElement = document.createElement("button");
-button.innerHTML = "🦟";
+button.innerHTML = "🫱🦟";
 
 const autoSwatter: UpgradeItem = {
   button: document.createElement("button"),
   cost: 10,
   growthRate: 0.1,
-  name: "🎾",
+  name: "Electric Swatter 🎾",
   currentAmount: 0,
   upgradeCounter: document.createElement("div"),
 };
@@ -44,7 +44,7 @@ const UVLamp: UpgradeItem = {
   button: document.createElement("button"),
   cost: 100,
   growthRate: 2.0,
-  name: "🛋️",
+  name: "UV Lamp 🛋️",
   currentAmount: 0,
   upgradeCounter: document.createElement("div"),
 };
@@ -57,7 +57,7 @@ const BugSpray: UpgradeItem = {
   button: document.createElement("button"),
   cost: 1000,
   growthRate: 50,
-  name: "🗞",
+  name: "Auto Swatter 🗞",
   currentAmount: 0,
   upgradeCounter: document.createElement("div"),
 };
