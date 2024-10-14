@@ -43,96 +43,66 @@ upgradeMenu.innerHTML = "UPGRADES:";
 
 const availableItems: Item[] = [
   {
-    button: document.createElement("button"),
+    name: "Auto Swatter 🗞",
     cost: 10,
     growthRate: 2,
-    name: "Auto Swatter 🗞",
-    currentAmount: 0,
-    upgradeCounter: document.createElement("div"),
     description: "Swatting automatically with the daily paper",
   },
   {
-    button: document.createElement("button"),
+    name: "UV Lamp 🛋️",
     cost: 100,
     growthRate: 10,
-    name: "UV Lamp 🛋️",
-    currentAmount: 0,
-    upgradeCounter: document.createElement("div"),
     description: "Attracting mosquitos with UV light",
   },
   {
-    button: document.createElement("button"),
+    name: "Electric Swatter 🎾",
     cost: 200,
     growthRate: 100,
-    name: "Electric Swatter 🎾",
-    currentAmount: 0,
-    upgradeCounter: document.createElement("div"),
     description: "Its almost like playing tennis",
   },
   {
-    button: document.createElement("button"),
+    name: "Repellant Spray 🌿",
     cost: 5000,
     growthRate: 500,
-    name: "Repellant Spray 🌿",
-    currentAmount: 0,
-    upgradeCounter: document.createElement("div"),
     description:
       "A protective layer that keeps mosquitos away while you swat in peace",
   },
   {
-    button: document.createElement("button"),
+    name: "Mosquito Drone 🚁",
     cost: 20000,
     growthRate: 1000,
-    name: "Mosquito Drone 🚁",
-    currentAmount: 0,
-    upgradeCounter: document.createElement("div"),
     description:
       "An advanced AI-driven drone that targets mosquitos autonomously.",
   },
-];
-
-app.append(mainButton);
-for (const curr of availableItems) {
-  curr.button.innerHTML = curr.name;
-  curr.button.disabled = true;
-  curr.upgradeCounter.innerHTML =
-    curr.name +
-    ` x${curr.currentAmount}, cost: ` +
-    curr.cost +
-    " : " +
-    curr.description;
-  app.append(curr.button);
-}
-app.append(counterElement);
-app.append(growthDisplay);
-app.append(upgradeMenu);
-for (const curr of availableItems) {
-  app.append(curr.upgradeCounter);
-}
+].map((item) => ({
+  ...item,
+  button: document.createElement("button"),
+  upgradeCounter: document.createElement("div"),
+  currentAmount: 0,
+}));
 
 function updateCounter(amount: number = 1) {
   counter += amount;
   counterInteger = Math.round(counter);
   counterElement.innerHTML = counterDescription;
   growthDisplay.innerHTML = growthDescription;
-  checkUnlock();
+  updateDisplay();
 }
 
 function frameUpdate(currentTime: number) {
   const delta = (currentTime - startTime) / 1000;
-
   startTime = currentTime;
-
   updateCounter(delta * growthRate);
-
   requestAnimationFrame(frameUpdate);
 }
 
-function startTimeUpdate(currentTime: number) {
-  startTime = currentTime;
-
-  frameUpdate(currentTime);
-}
+const updateDisplay = () => {
+  counterElement.innerHTML = `${Math.round(counter)} 🦟 swatted`;
+  growthDisplay.innerHTML = `${growthRate} 🦟/sec`;
+  availableItems.forEach(
+    ({ button, cost }) => (button.disabled = counter < cost),
+  );
+};
 
 function subtractCost(curr: Item) {
   counter -= curr.cost;
@@ -145,21 +115,30 @@ function subtractCost(curr: Item) {
     curr.cost +
     " : " +
     curr.description;
-}
-
-function checkUnlock() {
-  for (const curr of availableItems) {
-    if (counter >= curr.cost && curr.button.disabled) {
-      curr.button.disabled = false;
-    } else if (counter < curr.cost && !curr.button.disabled) {
-      curr.button.disabled = true;
-    }
-  }
+  updateDisplay();
 }
 
 mainButton.onclick = () => updateCounter();
 for (const curr of availableItems) {
+  curr.button.innerHTML = curr.name;
+  curr.button.disabled = true;
+  curr.upgradeCounter.innerHTML =
+    curr.name +
+    ` x${curr.currentAmount}, cost: ` +
+    curr.cost +
+    " : " +
+    curr.description;
+  app.append(curr.button);
   curr.button.onclick = () => subtractCost(curr);
 }
+app.append(mainButton);
+app.append(counterElement);
+app.append(growthDisplay);
+app.append(upgradeMenu);
+for (const curr of availableItems) {
+  app.append(curr.upgradeCounter);
+}
 
-requestAnimationFrame(() => startTimeUpdate(performance.now()));
+requestAnimationFrame(
+  (time) => ((startTime = time), frameUpdate(performance.now())),
+);
