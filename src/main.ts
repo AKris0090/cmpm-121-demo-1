@@ -6,14 +6,8 @@ const gameName = "🦟 Mosquito Swatting Simulator🦟";
 document.title = gameName;
 
 let counter: number = 0;
-let counterInteger: number = Math.round(counter);
 let startTime: number = 0;
 let growthRate: number = 0;
-
-const counterDescription: string =
-  `${counterInteger} 🦟` + (counterInteger > 1 ? "s " : " ") + "swatted";
-const growthDescription: string =
-  `${growthRate} 🦟` + (growthRate > 1 ? "s " : " ") + "mosquito / sec";
 
 interface Item {
   button: HTMLButtonElement;
@@ -33,10 +27,8 @@ const mainButton: HTMLButtonElement = document.createElement("button");
 mainButton.innerHTML = "🫱🦟";
 
 const counterElement = document.createElement("div");
-counterElement.innerHTML = counterDescription;
 
 const growthDisplay = document.createElement("div");
-growthDisplay.innerHTML = growthDescription;
 
 const upgradeMenu = document.createElement("h2");
 upgradeMenu.innerHTML = "UPGRADES:";
@@ -81,21 +73,6 @@ const availableItems: Item[] = [
   currentAmount: 0,
 }));
 
-function updateCounter(amount: number = 1) {
-  counter += amount;
-  counterInteger = Math.round(counter);
-  counterElement.innerHTML = counterDescription;
-  growthDisplay.innerHTML = growthDescription;
-  updateDisplay();
-}
-
-function frameUpdate(currentTime: number) {
-  const delta = (currentTime - startTime) / 1000;
-  startTime = currentTime;
-  updateCounter(delta * growthRate);
-  requestAnimationFrame(frameUpdate);
-}
-
 const updateDisplay = () => {
   counterElement.innerHTML = `${Math.round(counter)} 🦟 swatted`;
   growthDisplay.innerHTML = `${growthRate} 🦟/sec`;
@@ -103,6 +80,11 @@ const updateDisplay = () => {
     ({ button, cost }) => (button.disabled = counter < cost),
   );
 };
+
+function updateCounter(amount: number = 1) {
+  counter += amount;
+  updateDisplay();
+}
 
 function subtractCost(curr: Item) {
   counter -= curr.cost;
@@ -116,6 +98,13 @@ function subtractCost(curr: Item) {
     " : " +
     curr.description;
   updateDisplay();
+}
+
+function frameUpdate(currentTime: number) {
+  const delta = (currentTime - startTime) / 1000;
+  startTime = currentTime;
+  updateCounter(delta * growthRate);
+  requestAnimationFrame(frameUpdate);
 }
 
 mainButton.onclick = () => updateCounter();
