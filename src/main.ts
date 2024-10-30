@@ -14,47 +14,112 @@ const header = document.createElement("h1");
 header.innerHTML = gameName;
 app.append(header);
 
-const buttonDiv = document.createElement("div");
-app.append(buttonDiv);
+const buttonContainer = document.createElement("div");
+buttonContainer.classList.add("button-container");
+app.append(buttonContainer);
 
 const mainButton = document.createElement("button");
-mainButton.innerHTML = "🫱🦟";
 mainButton.onclick = () => incrementCounter(1);
-buttonDiv.append(mainButton);
+mainButton.classList.add("main-button");
+mainButton.innerHTML = `<span>🫱</span><span class="${"fly"}">🦟</span>`;
+buttonContainer.append(mainButton);
+
+const displayContainer = document.createElement("div");
+displayContainer.classList.add("display-container");
+buttonContainer.append(displayContainer);
 
 const counterElement = document.createElement("div");
-app.append(counterElement);
+counterElement.classList.add("counter");
+displayContainer.append(counterElement);
+
 const growthDisplay = document.createElement("div");
-app.append(growthDisplay);
+growthDisplay.classList.add("counter");
+displayContainer.append(growthDisplay);
 
 const upgradeMenu = document.createElement("h2");
 upgradeMenu.innerHTML = "UPGRADES:";
+upgradeMenu.classList.add("upgrade-counter");
 app.append(upgradeMenu);
 
-interface UpgradeState {
-  amount: number;
-  cost: number;
-  growthRate: number;
-}
+const buttonDiv = document.createElement("div");
+app.append(buttonDiv);
+
+const descriptions = document.createElement("div");
+descriptions.classList.add("descriptions");
+app.append(descriptions);
 
 interface Item {
   button: HTMLButtonElement;
   name: string;
+  cost: number;
+  growthRate: number;
   upgradeCounter: HTMLDivElement;
   description: string;
-  state: UpgradeState;
+  amount: number;
 
   applyUpgrade(): void;
   updateButtonDescription(): void;
 }
 
+const availableItems: Item[] = [
+  {
+    name: "Auto Swatter 🗞",
+    cost: 10,
+    growthRate: 2,
+    description: "Swatting automatically with the daily paper",
+  },
+  {
+    name: "UV Lamp 🛋️",
+    cost: 100,
+    growthRate: 10,
+    description: "Attracting mosquitos with UV light",
+  },
+  {
+    name: "Electric Swatter 🎾",
+    cost: 200,
+    growthRate: 100,
+    description: "Its almost like playing tennis",
+  },
+  {
+    name: "Repellant Spray 🌿",
+    cost: 5000,
+    growthRate: 500,
+    description:
+      "A protective layer that keeps mosquitos away while you swat in peace",
+  },
+  {
+    name: "Mosquito Drone 🚁",
+    cost: 20000,
+    growthRate: 1000,
+    description:
+      "An advanced AI-driven drone that targets mosquitos autonomously.",
+  },
+].map((item) => ({
+  ...item,
+  button: document.createElement("button"),
+  upgradeCounter: document.createElement("div"),
+  amount: 0,
+  applyUpgrade: function () {
+    incrementCounter(-this.cost);
+    growthRate += this.growthRate;
+    this.amount++;
+    this.cost *= COST_MULTIPLIER;
+    this.updateButtonDescription();
+  },
+  updateButtonDescription: function () {
+    this.button.innerHTML =
+      this.name + `: x${this.amount}` + "<br> Cost: " + this.cost.toFixed(2);
+    this.upgradeCounter.innerHTML = this.name + " : " + this.description;
+  },
+}));
+
 class UIUpdater {
   updateGameUI(increaseAmount: number): void {
     counter += increaseAmount;
-    counterElement.innerHTML = `${Math.round(counter)} 🦟 swatted`;
-    growthDisplay.innerHTML = `${growthRate} 🦟/sec`;
+    counterElement.innerHTML = `Swatted: ${Math.round(counter)} 🦟`;
+    growthDisplay.innerHTML = `Growth: ${growthRate.toFixed(2)} 🦟/sec`;
     availableItems.forEach(
-      ({ button, state }) => (button.disabled = counter < state.cost),
+      ({ button, cost }) => (button.disabled = counter < cost),
     );
   }
 
@@ -67,56 +132,6 @@ class UIUpdater {
 }
 
 const uiManager = new UIUpdater();
-
-const availableItems: Item[] = [
-  {
-    name: "Auto Swatter 🗞",
-    state: { cost: 10, growthRate: 2 },
-    description: "Swatting automatically with the daily paper",
-  },
-  {
-    name: "UV Lamp 🛋️",
-    state: { cost: 100, growthRate: 10 },
-    description: "Attracting mosquitos with UV light",
-  },
-  {
-    name: "Electric Swatter 🎾",
-    state: { cost: 200, growthRate: 100 },
-    description: "Its almost like playing tennis",
-  },
-  {
-    name: "Repellant Spray 🌿",
-    state: { cost: 5000, growthRate: 500 },
-    description:
-      "A protective layer that keeps mosquitos away while you swat in peace",
-  },
-  {
-    name: "Mosquito Drone 🚁",
-    state: { cost: 20000, growthRate: 1000 },
-    description:
-      "An advanced AI-driven drone that targets mosquitos autonomously.",
-  },
-].map((item) => ({
-  ...item,
-  button: document.createElement("button"),
-  upgradeCounter: document.createElement("div"),
-  state: { ...item.state, amount: 0 },
-  applyUpgrade: function () {
-    incrementCounter(-this.state.cost);
-    growthRate += this.state.growthRate;
-    this.state.amount++;
-    this.state.cost *= COST_MULTIPLIER;
-    this.updateButtonDescription();
-  },
-  updateButtonDescription: function () {
-    this.upgradeCounter.innerHTML =
-      this.name +
-      ` x${this.state.amount}, cost: ` +
-      this.state.cost +
-      " : " +
-      this.description;
-  },
-}));
 
 function frameUpdate(currentTime: number) {
   const delta = (currentTime - startTime) / 1000;
@@ -137,7 +152,7 @@ for (const currentItem of availableItems) {
     currentItem.applyUpgrade();
   };
   buttonDiv.append(currentItem.button);
-  app.append(currentItem.upgradeCounter);
+  descriptions.append(currentItem.upgradeCounter);
 }
 
 requestAnimationFrame(
